@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { products } from '@/lib/data';
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,61 +9,44 @@ export async function GET(request: NextRequest) {
     const sort = searchParams.get('sort') || 'newest';
     const featured = searchParams.get('featured');
 
-    const where: Record<string, unknown> = {};
+    let filteredProducts = [...products];
 
+    // Filter by category
     if (category) {
-      where.category = { slug: category };
+      filteredProducts = filteredProducts.filter(p => p.categorySlug === category);
     }
 
+    // Filter by search
     if (search) {
-      where.OR = [
-        { name: { contains: search } },
-        { description: { contains: search } },
-      ];
+      const searchLower = search.toLowerCase();
+      filteredProducts = filteredProducts.filter(p => 
+        p.name.toLowerCase().includes(searchLower) || 
+        p.description.toLowerCase().includes(searchLower)
+      );
     }
 
+    // Filter by featured
     if (featured === 'true') {
-      where.featured = true;
+      filteredProducts = filteredProducts.filter(p => p.featured);
     }
 
-    let orderBy: Record<string, string> = {};
+    // Sort products
     switch (sort) {
       case 'price-asc':
-        orderBy = { price: 'asc' };
+        filteredProducts.sort((a, b) => a.price - b.price);
         break;
       case 'price-desc':
-        orderBy = { price: 'desc' };
+        filteredProducts.sort((a, b) => b.price - a.price);
         break;
       case 'name':
-        orderBy = { name: 'asc' };
+        filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
         break;
       default:
-        orderBy = { createdAt: 'desc' };
+        // Keep original order (newest first)
+        break;
     }
 
-    const products = await prisma.product.findMany({
-      where,
-      orderBy,
-      include: {
-        category: true,
-        reviews: {
-          select: {
-            rating: true,
-          },
-        },
-      },
-    });
-
-    const productsWithRating = products.map((product: any) => ({
-      ...product,
-      avgRating:
-        product.reviews.length > 0
-          ? product.reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / product.reviews.length
-          : 0,
-      reviewCount: product.reviews.length,
-    }));
-
-    return NextResponse.json(productsWithRating);
+    return NextResponse.json(filteredProducts);
   } catch (error) {
     console.error('Products fetch error:', error);
     return NextResponse.json(
