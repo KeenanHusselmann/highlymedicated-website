@@ -35,7 +35,7 @@ export default function AgeVerification() {
             <h2 className="text-2xl font-bold text-dark mb-2">
               Age Verification
             </h2>
-            <p className="text-dark/60 text-sm mb-6 leading-relaxed">
+            <p className="text-dark text-base mb-6 leading-relaxed">
               You must be 18 years or older to access Highly Medicated. 
               By entering this site, you confirm that you are of legal age 
               in South Africa to purchase cannabis-related products.
@@ -52,13 +52,13 @@ export default function AgeVerification() {
               </Button>
               <button
                 onClick={() => window.location.href = 'https://www.google.com'}
-                className="w-full py-3 text-sm text-dark/40 hover:text-dark/60 transition-colors"
+                className="w-full py-3 text-sm text-dark/70 hover:text-dark transition-colors font-medium"
               >
                 I am Under 18
               </button>
             </div>
 
-            <p className="mt-6 text-[11px] text-dark/30 leading-relaxed">
+            <p className="mt-6 text-xs text-dark/50 leading-relaxed">
               By entering this website, you agree to our{' '}
               <a href="/terms" className="underline hover:text-primary">Terms & Conditions</a>{' '}
               and{' '}
