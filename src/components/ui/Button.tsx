@@ -1,10 +1,9 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
-import { ReactNode, ButtonHTMLAttributes } from 'react';
+import { ReactNode } from 'react';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode;
   variant?: 'primary' | 'secondary' | 'accent' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
@@ -48,9 +47,8 @@ export default function Button({
   };
 
   return (
-    <motion.button
+    <button
       className={cn(baseStyles, sizes[size], variants[variant], className)}
-      whileTap={{ scale: 0.97 }}
       disabled={disabled || loading}
       {...props}
     >
@@ -75,10 +73,10 @@ export default function Button({
           />
         </svg>
       )}
-      <span>{children}</span>
+      {children}
       {glossy && variant !== 'outline' && variant !== 'ghost' && (
         <span className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
       )}
-    </motion.button>
+    </button>
   );
 }
