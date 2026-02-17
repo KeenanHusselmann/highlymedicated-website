@@ -1,10 +1,10 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { motion, HTMLMotionProps } from 'framer-motion';
-import { ReactNode } from 'react';
+import { motion } from 'framer-motion';
+import { ReactNode, ButtonHTMLAttributes } from 'react';
 
-interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode;
   variant?: 'primary' | 'secondary' | 'accent' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
@@ -75,7 +75,7 @@ export default function Button({
           />
         </svg>
       )}
-      {children}
+      <span>{children}</span>
       {glossy && variant !== 'outline' && variant !== 'ghost' && (
         <span className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
       )}
