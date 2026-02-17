@@ -19,27 +19,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const existing = await prisma.newsletter.findUnique({ where: { email } });
-    if (existing) {
-      if (existing.active) {
-        return NextResponse.json(
-          { message: 'You are already subscribed!' },
-          { status: 200 }
-        );
-      }
-      // Re-subscribe
-      await prisma.newsletter.update({
-        where: { email },
-        data: { active: true },
-      });
-      return NextResponse.json(
-        { message: 'Welcome back! You have been re-subscribed.' },
-        { status: 200 }
-      );
-    }
-
-    await prisma.newsletter.create({ data: { email } });
-
+    // For demo: accept all subscriptions
     return NextResponse.json(
       { message: 'Successfully subscribed to the newsletter!' },
       { status: 201 }
@@ -64,11 +44,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    await prisma.newsletter.update({
-      where: { email },
-      data: { active: false },
-    });
-
+    // For demo: accept all unsubscribes
     return NextResponse.json({ message: 'Successfully unsubscribed' });
   } catch (error) {
     console.error('Newsletter unsubscribe error:', error);

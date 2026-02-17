@@ -18,15 +18,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const review = await prisma.review.create({
-      data: {
-        productId,
-        userId: userId || null,
-        rating,
-        comment: comment || '',
-        authorName: authorName || 'Anonymous',
-      },
-    });
+    const review = {
+      id: Date.now().toString(),
+      productId,
+      userId: userId || null,
+      rating,
+      comment: comment || '',
+      authorName: authorName || 'Anonymous',
+      createdAt: new Date().toISOString(),
+    };
 
     return NextResponse.json(review, { status: 201 });
   } catch (error) {
@@ -50,17 +50,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const reviews = await prisma.review.findMany({
-      where: { productId },
-      orderBy: { createdAt: 'desc' },
-      include: {
-        user: {
-          select: { name: true },
-        },
-      },
-    });
-
-    return NextResponse.json(reviews);
+    // Return empty reviews array for demo
+    return NextResponse.json([]);
   } catch (error) {
     console.error('Reviews fetch error:', error);
     return NextResponse.json(

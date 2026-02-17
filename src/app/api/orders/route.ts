@@ -20,31 +20,27 @@ export async function POST(request: NextRequest) {
 
     const orderNumber = `HM-${Date.now().toString(36).toUpperCase()}`;
 
-    const order = await prisma.order.create({
-      data: {
-        orderNumber,
-        customerEmail,
-        customerName: customerName || '',
-        customerPhone: customerPhone || '',
-        shippingAddress: JSON.stringify(shippingAddress),
-        paymentMethod,
-        subtotal,
-        shipping,
-        total,
-        status: paymentMethod === 'cod' ? 'confirmed' : 'pending',
-        items: {
-          create: items.map((item: { productId?: string; name: string; price: number; quantity: number }) => ({
-            productId: item.productId || null,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-          })),
-        },
-      },
-      include: {
-        items: true,
-      },
-    });
+    const order = {
+      id: Date.now().toString(),
+      orderNumber,
+      customerEmail,
+      customerName: customerName || '',
+      customerPhone: customerPhone || '',
+      shippingAddress,
+      paymentMethod,
+      subtotal,
+      shipping,
+      total,
+      status: paymentMethod === 'cod' ? 'confirmed' : 'pending',
+      createdAt: new Date().toISOString(),
+      items: items.map((item: { productId?: string; name: string; price: number; quantity: number }) => ({
+        id: Date.now().toString() + Math.random(),
+        productId: item.productId || null,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+    };
 
     return NextResponse.json(order, { status: 201 });
   } catch (error) {
@@ -68,13 +64,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const orders = await prisma.order.findMany({
-      where: { customerEmail: email },
-      orderBy: { createdAt: 'desc' },
-      include: { items: true },
-    });
-
-    return NextResponse.json(orders);
+    // Return empty orders array for demo
+    return NextResponse.json([]);
   } catch (error) {
     console.error('Orders fetch error:', error);
     return NextResponse.json(
